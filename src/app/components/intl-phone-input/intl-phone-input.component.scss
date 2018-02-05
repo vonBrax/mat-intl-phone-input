@@ -1,0 +1,23 @@
+// overriding image path
+$flagsImagePath: "../../plugin/";
+@import "../../plugin/intlTelInput.scss";
+
+.iti-flag {
+  display: inline-block;
+}
+
+.selected-flag mat-icon {
+  vertical-align: bottom;
+}
+
+:host /deep/ .flag-container .mat-input-infix.mat-form-field-infix {
+  max-width: 75px;
+}
+
+/* Rule moved to styles.css (element is not
+nested within app-root
+:host /deep/ .mat-autocomplete-panel {
+  width: fit-content;
+  max-width: 100vw;
+}
+*/

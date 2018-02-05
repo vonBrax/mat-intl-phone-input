@@ -8,6 +8,8 @@
   },
   "exclude": [
     "test.ts",
+    "app/models/plugin.class.ts",
+    "app/plugin/types/*.*",
     "**/*.spec.ts"
   ]
 }

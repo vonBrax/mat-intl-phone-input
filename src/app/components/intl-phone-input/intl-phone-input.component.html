@@ -1,0 +1,29 @@
+<h1>INTERNATIONAL PHONE INPUT</h1>
+<form [formGroup]="formGroup">
+
+  <mat-form-field class="flag-container" floatLabel="never" [ngClass]="'iti-sdc'+(selectedCountry.dialCode.length +1)">
+    <div matPrefix class="selected-flag">
+      <div class="iti-flag" [ngClass]="selectedCountry.iso2"></div>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </div>
+    <input
+      matInput
+      type="text"
+      placeholder=""
+      aria-label="Country dial code"
+      formControlName="dialCodeControl"
+      [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onSelect($event)">
+      <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
+        <span class="iti-flag {{country.iso2}}"></span>
+        +{{country.dialCode}} {{country.name}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <mat-form-field>
+      <input matInput type="tel" placeholder="Phone number" formControlName="phoneNumberControl">
+  </mat-form-field>
+</form>
+
+<p>{{formGroup.value | json}}</p>
