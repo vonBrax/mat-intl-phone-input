@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 
 import {
   MatFormFieldModule,
@@ -23,6 +24,8 @@ import { IntlPhoneInputComponent } from './components/intl-phone-input/intl-phon
     BrowserModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
+    HttpClientModule,
+    HttpClientJsonpModule,
     MatFormFieldModule,
     MatAutocompleteModule,
     MatInputModule,

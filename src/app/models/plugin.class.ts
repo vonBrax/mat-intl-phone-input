@@ -1140,7 +1140,8 @@ export class Plugin {
    // this is called when the geoip call returns
   protected handleAutoCountry() {
     if (this.options.initialCountry === "auto") {
-      // we must set this even if there is an initial val in the input: in case the initial val is invalid and they delete it - they should see their auto country
+      // we must set this even if there is an initial val in the input: in case
+      // the initial val is invalid and they delete it - they should see their auto country
       this.defaultCountry = $.fn[pluginName].autoCountry;
       // if there's no initial value in the input, then update the flag
       if (!this.telInput.val()) {

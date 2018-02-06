@@ -8,7 +8,9 @@
     "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "gen-ext-phonemetadata": "libphonenumber-generate-metadata src/app/models/metadata.custom.json --extended",
+    "gen-fixed-mobile-phonemetadata": "libphonenumber-generate-metadata src/app/models/metadata.custom.json --types mobile,fixed_line"
   },
   "private": true,
   "dependencies": {
@@ -24,6 +26,7 @@
     "@angular/platform-browser-dynamic": "^5.2.0",
     "@angular/router": "^5.2.0",
     "core-js": "^2.4.1",
+    "libphonenumber-js": "^1.0.8",
     "rxjs": "^5.5.6",
     "zone.js": "^0.8.19"
   },

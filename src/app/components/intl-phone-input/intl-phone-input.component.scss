@@ -9,9 +9,14 @@ $flagsImagePath: "../../plugin/";
 .selected-flag mat-icon {
   vertical-align: bottom;
 }
-
+ 
+.last-preferred {
+  border-bottom: 1px solid rgba(0, 0, 0, .12);
+} 
+ 
 :host /deep/ .flag-container .mat-input-infix.mat-form-field-infix {
-  max-width: 75px;
+  max-width: 131.55px;
+  /* max-width: 26.55px; */
 }
 
 /* Rule moved to styles.css (element is not

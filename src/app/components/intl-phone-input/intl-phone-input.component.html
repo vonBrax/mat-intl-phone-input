@@ -1,9 +1,9 @@
 <h1>INTERNATIONAL PHONE INPUT</h1>
-<form [formGroup]="formGroup">
-
-  <mat-form-field class="flag-container" floatLabel="never" [ngClass]="'iti-sdc'+(selectedCountry.dialCode.length +1)">
+<fieldset [formGroup]="formGroup">
+  <!-- <mat-form-field class="flag-container" floatLabel="never" [ngClass]="'iti-sdc'+(selectedCountry.dialCode.length +1)"> -->
+  <mat-form-field class="flag-container" floatLabel="never">
     <div matPrefix class="selected-flag">
-      <div class="iti-flag" [ngClass]="selectedCountry.iso2"></div>
+      <div class="iti-flag" [ngClass]="selectedCountry.iso2"></div> 
       <mat-icon>arrow_drop_down</mat-icon>
     </div>
     <input
@@ -12,18 +12,21 @@
       placeholder=""
       aria-label="Country dial code"
       formControlName="dialCodeControl"
-      [matAutocomplete]="auto">
+      [matAutocomplete]="auto"
+      (focus)="onFocus($event)">
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" (optionSelected)="onSelect($event)">
-      <mat-option *ngFor="let country of filteredCountries | async" [value]="country">
+      <mat-option *ngFor="let country of filteredCountries | async" [value]="country" [class.last-preferred]="country.isLastPreferred">
         <span class="iti-flag {{country.iso2}}"></span>
         +{{country.dialCode}} {{country.name}}
       </mat-option>
     </mat-autocomplete>
   </mat-form-field>
-
-  <mat-form-field>
-      <input matInput type="tel" placeholder="Phone number" formControlName="phoneNumberControl">
+  <!-- <br> -->
+  <mat-form-field [floatLabel]="selectedCountry.placeholder ? 'always' : 'auto'">
+    <mat-label>Phone number</mat-label>
+      <input matInput type="tel" [placeholder]="selectedCountry.placeholder ? selectedCountry.placeholder : ''" formControlName="phoneNumberControl" #phoneNumberField>
+      <input type="hidden" formControlName="hiddenPhoneNumberControl">
   </mat-form-field>
-</form>
+</fieldset>
 
 <p>{{formGroup.value | json}}</p>

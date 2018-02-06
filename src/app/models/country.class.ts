@@ -13,3 +13,8 @@ export class Country {
     this.areaCodes = country[4] || null;
   }
 }
+
+export interface IpInfoCallback {
+  ip: string;
+  country: string;
+}
