@@ -109,12 +109,12 @@ export class IntlPhoneInputComponent implements OnInit {
   }
 
   displayFn(country?: Country): string | undefined {
-    // if (!country) {
-    //   return '';
-    // }
-    // const index = country.name.indexOf(' (');
-    // return index > -1 ? country.name.substring(0, index) : country.name;
-    return country ? country.iso2.toUpperCase() : '';
+    if (!country) {
+      return '';
+    }
+    const index = country.name.indexOf(' (');
+    return index > -1 ? country.name.substring(0, index) : country.name;
+    // return country ? country.iso2.toUpperCase() : '';
   }
 
   filter(value: any, searchDialCode?: boolean): Country[] {
@@ -556,7 +556,7 @@ export class IntlPhoneInputComponent implements OnInit {
     // PS: Removing the callback parameter from here since it doesn't
     // seem to work (we just subscribe to the observable instead and
     // call the apropriate method when it arrives)
-    const url = options.geoIpJsonp;
+    const url = options.geoIpJsonpUrl;
     this.jsonpService.get(url).subscribe(value => this.handleAutoCountry(value));
   }
 
