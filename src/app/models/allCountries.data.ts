@@ -1283,7 +1283,7 @@ export const options = {
   excludeCountries: [],
   formatOnDisplay: true,
   geoIpLookup: null,
-  geoIpJsonpUrl: 'https://www.qunomedical.com/api/ipinfo',
+  geoIpJsonpUrl: '',
   hiddenInput: '',
   initialCountry: 'auto',
   nationalMode: true,
