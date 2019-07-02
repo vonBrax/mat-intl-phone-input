@@ -1,17 +1,15 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 
-import { Observable } from 'rxjs/Observable';
-import { startWith } from 'rxjs/operators/startWith';
-import { map } from 'rxjs/operators/map';
-import { filter } from 'rxjs/operators/filter';
+import { Observable } from 'rxjs';
+import { startWith ,  map ,  filter } from 'rxjs/operators';
 
 import { JsonpService } from '../../services/jsonp.service';
 
 
 import { ALL_COUNTRIES, regionlessNanpNumbers, options } from '../../models/allCountries.data';
 import { Country, IpInfoCallback } from '../../models/country.class';
-import { MatAutocompleteSelectedEvent } from '@angular/material';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { IntlTelInputUtils } from '../../models/utils';
 
 @Component({
