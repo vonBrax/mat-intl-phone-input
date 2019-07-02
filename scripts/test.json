@@ -1,6 +1,6 @@
 {
   "name": "ng-intl-phone",
-  "version": "1.4.0",
+  "version": "1.3.2",
   "license": "MIT",
   "scripts": {
     "ng": "ng",
@@ -10,8 +10,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "gen-ext-phonemetadata": "libphonenumber-generate-metadata metadata.custom.json --extended",
-    "gen-fixed-mobile-phonemetadata": "libphonenumber-generate-metadata metadata.custom.json --types mobile,fixed_line",
-    "update:phone": "node scripts/sync-releases.js"
+    "gen-fixed-mobile-phonemetadata": "libphonenumber-generate-metadata metadata.custom.json --types mobile,fixed_line"
   },
   "private": true,
   "dependencies": {
@@ -26,7 +25,7 @@
     "@angular/platform-browser-dynamic": "^8.0.3",
     "@angular/router": "^8.0.3",
     "core-js": "^3.1.4",
-    "libphonenumber-js": "^1.4.0",
+    "libphonenumber-js": "^1.3.2",
     "rxjs": "^6.5.2",
     "rxjs-compat": "^6.0.0-rc.0",
     "tslib": "^1.10.0",
