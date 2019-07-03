@@ -59,7 +59,9 @@ async function showMenu() {
     case 'ALL':
       log('\n Starting update of ALL available releases...\n');
       const testCase = newerVersions.slice(0, 2);
-      for await (const version of testCase) {
+      log(testCase.length);
+      log(testCase);
+      for (const version of testCase) {
         log('Preparing release for version ' + version);
         const lastResponse = await prepareRelease(version);
         log('\n' + version + ' is released!')
