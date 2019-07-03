@@ -106,7 +106,8 @@ async function prepareRelease(version) {
   }
   catch(err) {
     process.exitCode = 1;
-    throw err
+    // throw err
+    throw new Error(err.message);
   }
 }
 
@@ -157,7 +158,7 @@ function commitAndPush() {
   log(exec('git push'));
 }
 
-async function createRelease(version) {
+function createRelease(version) {
   log('\nRequesting release for ' + version);
   const body = {
     tag_name: `v${version}`,
