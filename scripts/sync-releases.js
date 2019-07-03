@@ -44,26 +44,34 @@ log(`Found ${newerVersions.length} new release${newerVersions.length <= 1 ? '' :
 showMenu();
 
 async function showMenu() {
-  const question = '\nSelect release method and press ENTER:\n(N)ext version only\n(A)ll available versions\n(R)elease current version\n(Q)uit\n\nAnswer: ';
+  const question = '\nSelect release method and press ENTER:\n(N)ext version only\n(A)ll available versions\n(Q)uit\n\nAnswer: ';
   const answer = await askQuestion(question);
+  const delay = 1000;
 
   switch(answer.toUpperCase()) {
     case 'N':
     case 'NEXT':
-      log('Ok, updating only next option');
+      log('\nStarting update to NEXT release...\n');
       prepareRelease(newerVersions[0])
       break;
 
     case 'A':
     case 'ALL':
-      log('Ok, updating all available options');
+      log('\n Starting update of ALL available releases...\n');
+      const testCase = newerVersions.slice(0, 2);
+      for await (const version of testCase) {
+        log('Preparing release for version: ' + version);
+        const lastResponse = await prepareRelease(version);
+        if (Date.now() - lastResponse < delay) {
+          log('Sleeping to not exceed api limit...');
+          const sleep = new Promise(resolve => {
+            setTimeout(() => resolve(), delay);
+          });
+          await sleep;
+          log('Wait time is done, moving on!');
+        }
+      }
       break;
-
-    // case 'R':
-    // case 'RELEASE':
-    //   log('Ok, creating a new release');
-    //   createRelease(repoVersion);
-    //   break;
 
     case 'Q':
     case 'QUIT':
@@ -77,52 +85,68 @@ async function showMenu() {
   }
 }
 
-function prepareRelease(version) {
-  if (Array.isArray(version)) {
-    log('Wait there son. We are not ready for batch releases yet!');
-  } else if (typeof version !== 'string') {
+async function prepareRelease(version) {
+  let lastResponse;
+
+  if (typeof version !== 'string') {
     process.exitCode = 1;
     throw new Error('Invalid argument type');
   }
 
   try {
+    checkGitStatus();
     updateDependency(version);
+    updatePackageFile(version);
+    generateMetadataFile();
+    checkFilesToCommit(exec('git ls-files --modified').split(/\s/));
+    commitAndPush();
+    lastResponse = await createRelease(version);
   }
   catch(err) {
+    process.exitCode = 1;
     throw err
   }
 
-  log('Updating package.json...');
-  log(exec(`npm version ${version} --no-git-tag-version`));
+  return lastResponse;
+}
 
-  log(exec('npm run gen-ext-phonemetadata'));
+function checkGitStatus() {
+  const hasChanges = exec('git status --porcelain');
 
-  const modifiedFiles = exec('git ls-files --modified').split(/\s/);
-
-  const shouldProceed = modifiedFiles.every(item => {
-    return /package(-lock)?\.json/.test(item) || /metadata\.custom\.json/.test(item);
-  });
-
-  if (!shouldProceed || modifiedFiles.length !== 3) {
-    log('Modified files number or name mismatch. Aborting.');
-    log(modifiedFiles);
+  if (hasChanges) {
+    log('Git directory is not clean. Aborting.');
+    log('\n' + hasChanges + '\n');
     process.exitCode = 1;
-    throw new Error('Unexpected error.');
+    throw new Error('Directory has uncommited or untracked changes.');
   }
-
-  try {
-    commitAndPush();
-    createRelease(version);
-  } catch(err) {
-    throw err;
-  }
+  
 }
 
 function updateDependency(version) {
   log('Installing version ' + version);
   log(exec(`npm install libphonenumber-js@${version}`));
-  // pkg.version = version;
-  // fs.writeFileSync('../package.json', `${JSON.stringify(pkg, null, 2)}\n`);
+}
+
+function updatePackageFile(version) {
+  log('Updating package.json...');
+  log(exec(`npm version ${version} --no-git-tag-version`));
+}
+
+function generateMetadataFile() {
+  log(exec('npm run gen-ext-phonemetadata'));
+}
+
+function checkFilesToCommit(files) {
+  const shouldProceed = files.every(item => {
+    return /package(-lock)?\.json/.test(item) || /metadata\.custom\.json/.test(item);
+  });
+
+  if (!shouldProceed || files.length !== 3) {
+    log('Modified files number or name mismatch. Aborting.');
+    log(files);
+    process.exitCode = 1;
+    throw new Error('Unexpected error.');
+  }
 }
 
 function commitAndPush() {
@@ -158,16 +182,17 @@ async function createRelease(version) {
   log('Request body:');
   log(body);
 
-  const req = https.request(options, res => {
-    log(`STATUS: ${res.statusCode}`);
-    log(`HEADERS: ${JSON.stringify(res.headers)}`);
-    res.setEncoding('utf8');
-    res.on('data', chunk => log(`BODY: ${chunk}`));
-    res.on('end', () => log('No more data in response.'));
+  return new Promise((resolve, reject) => {
+    const req = https.request(options, res => {
+      res.setEncoding('utf8');
+      log(`GIT API RESPONSE STATUS: ${res.statusCode}`);
+      res.on('end', () => resolve(Date.now()));
+      // log(`HEADERS: ${JSON.stringify(res.headers)}`);
+      // res.on('data', chunk => log(`BODY: ${chunk}`));
+    });
+  
+    req.on('error', err => reject(err));
+    req.write(JSON.stringify(body));
+    req.end();
   });
-
-  req.on('error', err => log(`problem with request: ${err.message}`));
-
-  req.write(JSON.stringify(body));
-  req.end();
 }
