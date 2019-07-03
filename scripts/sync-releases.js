@@ -59,8 +59,6 @@ async function showMenu() {
     case 'ALL':
       log('\n Starting update of ALL available releases...\n');
       const testCase = newerVersions.slice(0, 2);
-      log(testCase.length);
-      log(testCase);
 
       for (let i = 0; i < testCase.length; i++) {
         const version = testCase[i];
@@ -111,7 +109,6 @@ async function prepareRelease(version) {
     // throw err
     throw new Error(err.message);
   } finally {
-    log('Prepare release function is complete.');
     log('Last response time: ' + lastResponse);
     return lastResponse;
   }
@@ -193,24 +190,19 @@ async function createRelease(version) {
   // log(body);
 
   const promise = new Promise(
-    function (resolve, reject) {
+    (resolve, reject) => {
       const req = https.request(options, res => {
         res.setEncoding('utf8');
         log(`\nGIT API RESPONSE STATUS: ${res.statusCode}`);
         resolve(Date.now());
-        // res.on('end', () => {
-        //   log('Response ended. Returning');
-        //   resolve(Date.now())
-        // });
         // log(`HEADERS: ${JSON.stringify(res.headers)}`);
         // res.on('data', chunk => log(`BODY: ${chunk}`));
       });
-  
       req.on('error', err => reject(err));
       req.write(JSON.stringify(body));
       req.end();
     }
   );
-  await promise;
-  log('Promise is over. Returning');
+  const lastResponse = await promise;
+  return lastResponse;
 }
