@@ -61,10 +61,12 @@ async function showMenu() {
       const testCase = newerVersions.slice(0, 2);
       log(testCase.length);
       log(testCase);
-      for (const version of testCase) {
+
+      for (let i = 0; i < testCase.length; i++) {
+        const version = testCase[i];
         log('Preparing release for version ' + version);
         const lastResponse = await prepareRelease(version);
-        log('\n' + version + ' is released!')
+        log('\n' + version + ' is released! =)')
         if (Date.now() - lastResponse < delay) {
           log('Sleeping to not exceed api limit...');
           const sleep = new Promise(resolve => {
@@ -94,6 +96,7 @@ async function prepareRelease(version) {
     throw new Error('Invalid argument type');
   }
 
+  let lastResponse;
   try {
     checkGitStatus();
     updateDependency(version);
@@ -101,13 +104,16 @@ async function prepareRelease(version) {
     generateMetadataFile();
     checkFilesToCommit(exec('git ls-files --modified').split(/\s/));
     commitAndPush();
-    const lastResponse = await createRelease(version);
-    return lastResponse;
-  }
-  catch(err) {
+    lastResponse = await createRelease(version);
+    // return lastResponse;
+  } catch(err) {
     process.exitCode = 1;
     // throw err
     throw new Error(err.message);
+  } finally {
+    log('Prepare release function is complete.');
+    log('Last response time: ' + lastResponse);
+    return lastResponse;
   }
 }
 
