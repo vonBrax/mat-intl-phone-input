@@ -58,12 +58,11 @@ async function showMenu() {
     case 'A':
     case 'ALL':
       log('\n Starting update of ALL available releases...\n');
-      const testCase = newerVersions.slice(0, 2);
 
-      for (let i = 0; i < testCase.length; i++) {
-        const version = testCase[i];
+      for (let i = 0; i < newerVersions.length; i++) {
+        const version = newerVersions[i];
         log('\nPreparing release for version ' + version + '()');
-        log(`\nPreparing release for version ${version} (${testCase.length - i -1} remaing)`);
+        log(`\nPreparing release for version ${version} (${newerVersions.length - i -1} remaing)`);
         const lastResponse = await prepareRelease(version);
         log('\n' + version + ' is released! =)')
         if (Date.now() - lastResponse < delay) {
@@ -104,7 +103,6 @@ async function prepareRelease(version) {
     checkFilesToCommit(exec('git ls-files --modified').split(/\s/));
     commitAndPush();
     lastResponse = await createRelease(version);
-    // return lastResponse;
   } catch(err) {
     process.exitCode = 1;
     // throw err
