@@ -62,11 +62,12 @@ async function showMenu() {
 
       for (let i = 0; i < testCase.length; i++) {
         const version = testCase[i];
-        log('Preparing release for version ' + version);
+        log('\nPreparing release for version ' + version + '()');
+        log(`\nPreparing release for version ${version} (${testCase.length - i -1} remaing)`);
         const lastResponse = await prepareRelease(version);
         log('\n' + version + ' is released! =)')
         if (Date.now() - lastResponse < delay) {
-          log('Sleeping to not exceed api limit...');
+          log('\nSleeping to not exceed api limit...');
           const sleep = new Promise(resolve => {
             setTimeout(() => resolve(), delay);
           });
