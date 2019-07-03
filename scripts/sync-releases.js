@@ -87,8 +87,6 @@ async function showMenu() {
 }
 
 async function prepareRelease(version) {
-  let lastResponse;
-
   if (typeof version !== 'string') {
     process.exitCode = 1;
     throw new Error('Invalid argument type');
@@ -101,14 +99,13 @@ async function prepareRelease(version) {
     generateMetadataFile();
     checkFilesToCommit(exec('git ls-files --modified').split(/\s/));
     commitAndPush();
-    lastResponse = await createRelease(version);
+    const lastResponse = await createRelease(version);
+    return lastResponse;
   }
   catch(err) {
     process.exitCode = 1;
     throw err
   }
-
-  return lastResponse;
 }
 
 function checkGitStatus() {
