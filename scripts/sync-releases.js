@@ -130,7 +130,7 @@ function checkGitStatus() {
 }
 
 function updateDependency(version) {
-  log('Installing libphonenumber-js@' + version);
+  log('\nInstalling libphonenumber-js@' + version);
   log(exec(`npm install libphonenumber-js@${version}`));
 }
 
@@ -164,7 +164,7 @@ function commitAndPush() {
   log(exec('git push'));
 }
 
-function createRelease(version) {
+async function createRelease(version) {
   log('\nRequesting release for ' + version);
   const body = {
     tag_name: `v${version}`,
@@ -192,17 +192,24 @@ function createRelease(version) {
   // log('Request body:');
   // log(body);
 
-  return new Promise((resolve, reject) => {
-    const req = https.request(options, res => {
-      res.setEncoding('utf8');
-      log(`GIT API RESPONSE STATUS: ${res.statusCode}`);
-      res.on('end', () => resolve(Date.now()));
-      // log(`HEADERS: ${JSON.stringify(res.headers)}`);
-      // res.on('data', chunk => log(`BODY: ${chunk}`));
-    });
+  const promise = new Promise(
+    function (resolve, reject) {
+      const req = https.request(options, res => {
+        res.setEncoding('utf8');
+        log(`\nGIT API RESPONSE STATUS: ${res.statusCode}`);
+        res.on('end', () => {
+          log('Response ended. Returning');
+          resolve(Date.now())
+        });
+        // log(`HEADERS: ${JSON.stringify(res.headers)}`);
+        // res.on('data', chunk => log(`BODY: ${chunk}`));
+      });
   
-    req.on('error', err => reject(err));
-    req.write(JSON.stringify(body));
-    req.end();
-  });
+      req.on('error', err => reject(err));
+      req.write(JSON.stringify(body));
+      req.end();
+    }
+  );
+  await promise;
+  log('Promise is over. Returning');
 }
