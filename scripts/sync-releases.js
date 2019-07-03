@@ -197,10 +197,11 @@ async function createRelease(version) {
       const req = https.request(options, res => {
         res.setEncoding('utf8');
         log(`\nGIT API RESPONSE STATUS: ${res.statusCode}`);
-        res.on('end', () => {
-          log('Response ended. Returning');
-          resolve(Date.now())
-        });
+        resolve(Date.now());
+        // res.on('end', () => {
+        //   log('Response ended. Returning');
+        //   resolve(Date.now())
+        // });
         // log(`HEADERS: ${JSON.stringify(res.headers)}`);
         // res.on('data', chunk => log(`BODY: ${chunk}`));
       });
