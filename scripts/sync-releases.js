@@ -52,7 +52,7 @@ async function showMenu() {
     case 'N':
     case 'NEXT':
       log('\nStarting update to NEXT release...\n');
-      prepareRelease(newerVersions[0])
+      await prepareRelease(newerVersions[0])
       break;
 
     case 'A':
@@ -60,8 +60,9 @@ async function showMenu() {
       log('\n Starting update of ALL available releases...\n');
       const testCase = newerVersions.slice(0, 2);
       for await (const version of testCase) {
-        log('Preparing release for version: ' + version);
+        log('Preparing release for version ' + version);
         const lastResponse = await prepareRelease(version);
+        log('\n' + version + ' is released!')
         if (Date.now() - lastResponse < delay) {
           log('Sleeping to not exceed api limit...');
           const sleep = new Promise(resolve => {
@@ -123,16 +124,17 @@ function checkGitStatus() {
 }
 
 function updateDependency(version) {
-  log('Installing version ' + version);
+  log('Installing libphonenumber-js@' + version);
   log(exec(`npm install libphonenumber-js@${version}`));
 }
 
 function updatePackageFile(version) {
-  log('Updating package.json...');
+  log('\nUpdating package.json...');
   log(exec(`npm version ${version} --no-git-tag-version`));
 }
 
 function generateMetadataFile() {
+  log('\nGenerating new phone metadata');
   log(exec('npm run gen-ext-phonemetadata'));
 }
 
@@ -150,12 +152,14 @@ function checkFilesToCommit(files) {
 }
 
 function commitAndPush() {
+  log('\nCommitting and pushing files');
   log(exec('git add package.json package-lock.json metadata.custom.json'));
   log(exec('git commit -m "chore(deps): update libphonenumber and phone metadata"'));
   log(exec('git push'));
 }
 
 async function createRelease(version) {
+  log('\nRequesting release for ' + version);
   const body = {
     tag_name: `v${version}`,
     target_commitish: 'master',
@@ -177,10 +181,10 @@ async function createRelease(version) {
     }
   };
 
-  log('Request options: ');
-  log(options);
-  log('Request body:');
-  log(body);
+  // log('Request options: ');
+  // log(options);
+  // log('Request body:');
+  // log(body);
 
   return new Promise((resolve, reject) => {
     const req = https.request(options, res => {
